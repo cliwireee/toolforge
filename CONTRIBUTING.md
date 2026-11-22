@@ -9,10 +9,15 @@ git clone https://github.com/cliwireee/toolforge.git
 cd toolforge
 python -m venv .venv
 source .venv/bin/activate   # or Windows equivalent
-pip install -e ".[dev]"
+pip install -e ".[dev,mcp]"
 pytest
 ruff check src tests
+mypy
 ```
+
+Tests run offline: a deterministic stand-in tokenizer replaces `cl100k_base` unless a test is
+marked `real_tokenizer` (skipped offline, required in CI). Live-discovery tests start a tiny MCP
+server from `tests/fixtures/demo_server.py`.
 
 ## Good First Issues
 
@@ -27,7 +32,7 @@ Look for issues labelled `good first issue`. Typical starter tasks:
 
 1. Fork the repository and create a feature branch.
 2. Add tests for new behaviour.
-3. Ensure `pytest` and `ruff` pass.
+3. Ensure `pytest`, `ruff check src tests` and `mypy` pass.
 4. Open a PR with a clear description of the problem and solution.
 
 ## Code Style

@@ -10,8 +10,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
+        mcp: ["default"]
+        include:
+          # The [mcp] extra resolves to mcp 2.x; also cover the 1.x (FastMCP) line.
+          - python-version: "3.12"
+            mcp: "mcp>=1.20,<2"
 
     steps:
       - uses: actions/checkout@v4
@@ -20,15 +26,26 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e ".[dev,mcp]"
+
+      - name: Install ${{ matrix.mcp }}
+        if: matrix.mcp != 'default'
+        run: pip install "${{ matrix.mcp }}"
 
       - name: Lint with ruff
         run: ruff check src tests
 
+      - name: Type-check with mypy
+        run: mypy
+
+      # CI=true makes tests marked real_tokenizer fail (instead of skip) when the
+      # cl100k_base vocabulary cannot be downloaded.
       - name: Run tests
         run: pytest --cov=toolforge --cov-report=term-missing
 
@@ -48,3 +65,9 @@ jobs:
         run: |
           pip install twine
           twine check dist/*
+      - name: Smoke-test the wheel
+        run: |
+          python -m venv /tmp/wheel-venv
+          /tmp/wheel-venv/bin/pip install dist/*.whl
+          /tmp/wheel-venv/bin/toolforge --version
+          /tmp/wheel-venv/bin/python -c "import toolforge, pathlib; assert (pathlib.Path(toolforge.__file__).parent / 'py.typed').is_file()"
