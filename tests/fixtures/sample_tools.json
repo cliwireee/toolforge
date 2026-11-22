@@ -1,0 +1,47 @@
+{
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "Read the complete contents of a file from the file system.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string", "description": "Absolute path of the file to read"}
+        },
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "search_issues",
+      "description": "Search issues and pull requests across repositories using the full search syntax, with qualifiers for state, labels, authors, assignees, milestones and dates.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "Search query using issue search syntax"},
+          "sort": {"type": "string", "enum": ["comments", "reactions", "created", "updated"]},
+          "order": {"type": "string", "enum": ["asc", "desc"]},
+          "per_page": {"type": "integer", "minimum": 1, "maximum": 100},
+          "page": {"type": "integer", "minimum": 1}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "delete_branch",
+      "description": "Delete a branch from a repository.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "owner": {"type": "string"},
+          "repo": {"type": "string"},
+          "branch": {"type": "string"}
+        },
+        "required": ["owner", "repo", "branch"]
+      }
+    },
+    {
+      "name": "ping",
+      "description": "Check connectivity."
+    }
+  ]
+}

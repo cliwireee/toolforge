@@ -26,6 +26,8 @@ Toolforge is a local-first developer tool. It does not process user data in the 
 
 - Handling of optional API keys (e.g. `ANTHROPIC_API_KEY`)
 - Execution of user-supplied or agent-generated tool schemas
+- `toolforge audit --command` / `--mcp-config`, which start the MCP servers named in a config
+  file on your machine (as your MCP client would) with your environment
 - Future code-mode / sandbox execution paths
 
 Please report any issues related to these areas.
