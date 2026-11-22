@@ -127,5 +127,25 @@ max_always_load_tokens = 8000
     console.print("Edit the file to define profiles and policies, then run `toolforge audit`.")
 
 
+@app.command()
+def serve() -> None:
+    """
+    Start Toolforge as an MCP server (progressive tool loading).
+
+    Add this to your Claude Code / Cursor MCP config, for example:
+
+        {
+          "mcpServers": {
+            "toolforge": {
+              "command": "toolforge",
+              "args": ["serve"]
+            }
+          }
+        }
+    """
+    from toolforge.mcp.server import main as mcp_main
+    mcp_main()
+
+
 if __name__ == "__main__":
     app()
